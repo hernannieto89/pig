@@ -16,7 +16,7 @@ echo "0" > /sys/class/gpio/gpio22/value;
 echo "0" > /sys/class/gpio/gpio10/value;
 echo "0" > /sys/class/gpio/gpio9/value;
 
-bash -c "source /home/pi/.pyenv/versions/scheduler/bin/activate; python /home/pi/Desktop/pig.scheduler/main.py > /dev/null";
-bash -c "source /home/pi/.pyenv/versions/pig/bin/activate; cd /home/pi/Desktop/pig.station/; flask run";
-bash -c "source /home/pi/.pyenv/versions/hub/bin/activate; cd /home/pi/Desktop/pig.hub/; flask run -p 5001 -h 0.0.0.0";
+bash -c "source /home/pi/.pyenv/versions/scheduler/bin/activate; python /home/pi/Desktop/pig.scheduler/main.py > /home/pi/Desktop/sch.log"&;
+bash -c "source /home/pi/.pyenv/versions/pig/bin/activate; cd /home/pi/Desktop/pig.station/; flask run > /home/pi/Desktop/pig.log" &;
+bash -c "source /home/pi/.pyenv/versions/hub/bin/activate; cd /home/pi/Desktop/pig.hub/; flask run -p 5001 -h 0.0.0.0 > /home/pi/Desktop/hub.log"&;
 http get localhost:5000/ping;
