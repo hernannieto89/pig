@@ -6,5 +6,5 @@
 
 while true; do 
     http get localhost:5000/ping/;
-    sleep 1000;
+    sleep 10;
 done
