@@ -82,7 +82,7 @@ void readDHT(String pin, String type) {
   uint8_t intType = 0;
   String value = "";
   if (type == "dht22"){
-    intType == DHT22;
+    intType = DHT22;
   } else {
     intType = DHT11;
   }
