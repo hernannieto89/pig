@@ -1,6 +1,10 @@
 #include "DHT.h"
+const int AirValue = 620;
+const int WaterValue = 310;
+
 String nom = "Arduino";
 String msg;
+
 
 struct parsedMsg {
     String type;
@@ -17,7 +21,7 @@ void loop() {
   if (msg != "") {
     struct parsedMsg parsed;
     parsed = message_to_struct(msg);
-    // parsed.type == "dht22"
+    //parsed.type == "dht22"
     //Serial.print("TRY");
     //Serial.print(parsed.type);
     //Serial.print(parsed.pin);
@@ -69,7 +73,7 @@ struct parsedMsg message_to_struct(String msg) {
   }
 
 void makeAndSendResponse(String pin, String type, String value) {
-  String response = "{'pin': " + pin + ", 'type': " + type + ", 'response': " + value + "}";
+  String response = pin + "_" + type + "_" + value;
   Serial.print(response);
   }
 
@@ -91,7 +95,7 @@ void readDHT(String pin, String type) {
   if(isnan(t) or isnan(h)){
       value = "error";
   }else {
-      value = "{ 'h': " + String(h) + ", 't': " + String(t) + "}";
+      value = "_value#h:" + String(h) + ";t:" + String(t);
   }
   
   makeAndSendResponse(pin, type, value);
@@ -99,5 +103,10 @@ void readDHT(String pin, String type) {
   }
 
 void readSoilHumidity(String pin) {
+  int soilMoisture = 0;
+  int soilMoisturePercent = 0; 
+  soilMoisture = analogRead(A4);
+  soilMoisturePercent = map(soilMoisture, AirValue, WaterValue, 0, 100);
+  makeAndSendResponse(pin, "soil", String(soilMoisturePercent));
   return;
   }
