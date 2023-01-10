@@ -95,18 +95,50 @@ void readDHT(String pin, String type) {
   if(isnan(t) or isnan(h)){
       value = "error";
   }else {
-      value = "_value#h:" + String(h) + ";t:" + String(t);
+      value = "value#h:" + String(h) + ";t:" + String(t);
   }
   
   makeAndSendResponse(pin, type, value);
   return;
   }
 
+bool AnalogPin(String pin) {
+  if (pin.startsWith("0") or pin.startsWith("1") or pin.startsWith("2") or pin.startsWith("3") or pin.startsWith("4")){
+    return true;
+  } else {
+    return false;
+  }
+}
+
+int stringToAnalogPin(String pin) {
+  if (pin.startsWith("0")) {
+    return A0;
+  }
+  if (pin.startsWith("1")) {
+    return A1;
+  }
+  if (pin.startsWith("2")) {
+    return A2;
+  }
+  if (pin.startsWith("3")) {
+    return A3;
+  }
+  if (pin.startsWith("4")) {
+    return A4;
+  }
+  return  A5;
+ }
+
 void readSoilHumidity(String pin) {
   int soilMoisture = 0;
-  int soilMoisturePercent = 0; 
-  soilMoisture = analogRead(A4);
-  soilMoisturePercent = map(soilMoisture, AirValue, WaterValue, 0, 100);
-  makeAndSendResponse(pin, "soil", String(soilMoisturePercent));
+  int soilMoisturePercent = 0;
+  bool analogPin = AnalogPin(pin);
+  if (analogPin) {
+    soilMoisture = analogRead(stringToAnalogPin(pin));
+    soilMoisturePercent = map(soilMoisture, AirValue, WaterValue, 0, 100);
+    makeAndSendResponse(pin, "soil", "value#" + String(soilMoisturePercent));
+  } else {
+    makeAndSendResponse(pin, "soil", "error");
+    }
   return;
   }
