@@ -1,4 +1,7 @@
 #include "DHT.h"
+#include "OneWire.h"
+#include "DallasTemperature.h"
+
 const int AirValue = 620;
 const int WaterValue = 310;
 
@@ -30,7 +33,10 @@ void loop() {
     }
     if (parsed.type == "soil") {
       readSoilHumidity(parsed.pin);
-    } 
+    }
+    if (parsed.type == "waterTemp"){
+      readWaterTemp(parsed.pin);
+      } 
     //sendData();
   }
   delay(500);
@@ -82,7 +88,7 @@ void readDHT(String pin, String type) {
   uint8_t intType = 0;
   String value = "";
   if (type == "dht22"){
-    intType = DHT22;
+    intType =  DHT22;
   } else {
     intType = DHT11;
   }
@@ -142,3 +148,24 @@ void readSoilHumidity(String pin) {
     }
   return;
   }
+
+void readWaterTemp(String pin){
+  OneWire oneWireObj(pin.toInt());
+  DallasTemperature sensorDS18B20(&oneWireObj);
+  String value = "";
+  double temperature = 0;
+  String sTemperature = "";
+  sensorDS18B20.begin();
+  sensorDS18B20.requestTemperatures();
+
+  temperature = sensorDS18B20.getTempCByIndex(0);
+  if (temperature < 0 or temperature > 100){
+    value = "error";
+  } else {
+    sTemperature = String(temperature, 2);
+    value = "value#" + sTemperature;
+  }
+
+  makeAndSendResponse(pin, "waterTemp", value);
+  return;
+}
